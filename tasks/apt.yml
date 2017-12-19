@@ -1,0 +1,19 @@
+---
+  - name: Step 1 Configure the Jenkins APT key
+    apt_key: url=http://pkg.jenkins.io/debian/jenkins.io.key state=present
+    register: jenkins-Step1
+
+  - name: Step 2 Configure the Jenkins APT repositories
+    apt_repository: repo="deb http://pkg.jenkins-ci.org/debian binary/" state=present
+    register: jenkins-Step2
+
+  - name: Step 3 Install Jenkins
+    apt: pkg=jenkins={{ jenkins_version }} state=present
+    register: jenkins-Step3
+
+  - name: Step 4 Set user-defined configuration options
+    template: src=jenkins.j2
+              dest=/etc/default/jenkins
+    notify:
+      - restart jenkins
+    register: jenkins-Step4
